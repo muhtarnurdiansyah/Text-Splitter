@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <div class="well">
+            <h4>Upload File Splitter</h4>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-md-2">Browse File</label>
+
+                    <div class="col-md-4">
+                        <input type="file" accept=".txt" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" id="size" accept=".txt" class="form-control" placeholder="Number of Split" />
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" id="Upload">Start Split</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="~/Scripts/jquery-1.12.4.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+
+    $('#Upload').on('click', function () {
+        //$("input[type='file']").prop("disabled", true);
+ 
+
+        var data = new FormData();
+        var size = $('#size').val();
+
+        $.each($("input[type='file']")[0].files, function (i, file) {
+            data.append('files', file);
+        });
+            data.append('sizes', size);
+
+        $.ajax({
+            url: '@Url.Action("UploadFiles", "Home")',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (check) {
+                if (check) {
+                    window.location.href = '@Url.Action("DownloadFile", "Home")';
+
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Oversized Split!',
+                       
+                    })
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please fill the form!',
+
+                })
+            }
+        })
+    })
+
+</script>
+
+@*<h2>Downloads</h2>
+
+
+    @model List<string>
+    <h2>Downloads</h2>
+    <table>
+        <tr>
+            <th>File Name</th>
+            <th>Link</th>
+        </tr>
+        @for (var i = 0; i <= Model.Count - 1; i++)
+        {
+            <tr>
+                <td>@Model[i].ToString() </td>
+                <td>'@Url.Action("UploadFiles", "FilterSplitter")', new { TxtName = @Model[i].ToString() }) </td>
+            </tr>
+        }
+    </table>*@  
