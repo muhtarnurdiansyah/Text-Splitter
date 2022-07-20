@@ -19,9 +19,14 @@
                     <div class="col-md-2">
                         <input type="number" id="size" accept=".txt" class="form-control" placeholder="Number of Split" />
                     </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-primary" id="Upload">Start Split</button>
+                    <div class="col-md-offset-8">
+                        <button class="btn btn-primary" id="Upload"> Start Split (No Header)</button>
+                        <button class="btn btn-primary" id="Upload2">Start Split (With Header)</button>
                     </div>
+                    @*<br/>
+                    <div class="col-md-offset-8">
+                        <button class="btn btn-primary" id="Upload2">Start Split With Header</button>
+                    </div>*@                    
                 </div>
             </div>
         </div>
@@ -35,10 +40,20 @@
 
     $('#Upload').on('click', function () {
         //$("input[type='file']").prop("disabled", true);
+
  
 
         var data = new FormData();
         var size = $('#size').val();
+        if (size.trim()) {
+            Swal.fire({
+                icon: 'loading',
+                title: 'Loading',
+                text: 'Loading Download',
+                showConfirmButton: false,
+                timer: 5000,
+            });
+        }
 
         $.each($("input[type='file']")[0].files, function (i, file) {
             data.append('files', file);
@@ -52,7 +67,13 @@
             processData: false,
             data: data,
             success: function (check) {
+
                 if (check) {
+                    //Swal.fire({
+                    //    icon: 'loading',
+                    //    title: 'Loading',
+                    //    text: 'Download Success'
+                    //})
                     window.location.href = '@Url.Action("DownloadFile", "Home")';
 
                 }
@@ -75,6 +96,60 @@
             }
         })
     })
+
+    $('#Upload2').on('click', function () {
+        //$("input[type='file']").prop("disabled", true);
+
+
+        var data = new FormData();
+        var size = $('#size').val();
+        if (size.trim()) {
+            Swal.fire({
+                icon: 'loading',
+                title: 'Loading',
+                text: 'Loading Download',
+                showConfirmButton: false,
+                timer: 5000,
+            });
+        }
+
+        $.each($("input[type='file']")[0].files, function (i, file) {
+            data.append('files', file);
+        });
+        data.append('sizes', size);
+
+        $.ajax({
+            url: '@Url.Action("UploadFiles2", "Home")',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (check) {
+                if (check) {
+                    window.location.href = '@Url.Action("DownloadFile2", "Home")';
+
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Oversized Split!',
+
+                    })
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please fill the form!',
+
+                })
+            }
+        })
+    })
+
+    
 
 </script>
 
